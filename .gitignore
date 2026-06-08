@@ -1,0 +1,16 @@
+# 模型預測產物 / 大型二進位檔(不上 GitHub)
+*.npz
+*.npy
+*.pkl
+*.pt
+*.pth
+*.h5
+*.ckpt
+
+# 比賽提交檔
+submission_*.csv
+
+# Python 快取
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
