@@ -52,17 +52,35 @@ pip install torch lightgbm xgboost catboost scikit-learn numpy pandas
 
 ## 3. 資料放置
 
-本 repo **不包含主辦單位資料**（不可重新散布）。請至 AI CUP 競賽頁面下載下列檔案，
-放到 notebook 同層的 `origin_data/`（或於 Kaggle 掛載為 dataset，並對應修改 notebook 內路徑）：
+本 repo **不包含主辦單位資料**（不可重新散布）。請至 AI CUP 競賽頁面下載下列 4 個檔案：
 
 ```
-origin_data/
-├── train.csv        # 訓練資料
-├── test.csv         # 舊測試集（含標籤；僅取 action/point 作合法擴增，server 標籤被遮罩）
-└── test_new.csv     # 評測集（最終提交對象）
+train.csv                 # 訓練資料
+test_new.csv              # 評測集（最終提交對象）
+test.csv                  # 舊測試集（含標籤；僅取 action/point 作合法擴增，server 標籤被遮罩）
+sample_submission.csv     # 提交格式範本（用於對齊 rally_uid 與欄位順序）
 ```
 
-> **注意：** `test.csv` 的 `serverGetPoint` 為評測答案，程式以 `fix_server_leak=True`
+### 路徑設定（重要）
+
+本 notebook 於 **Kaggle Notebook** 開發，資料路徑寫死在 **cell 4（Config）**，預設為
+Kaggle dataset 掛載路徑：
+
+```python
+train_path     = "/kaggle/input/datasets/kgiprkoio/table-tennis/train.csv"
+test_path      = "/kaggle/input/datasets/kgiprkoio/table-tennis/test_new.csv"
+sample_path    = "/kaggle/input/datasets/kgiprkoio/table-tennis/sample_submission.csv"
+old_test_path  = "/kaggle/input/datasets/kgiprkoio/table-tennis/test.csv"
+output_path    = "/kaggle/working/submission_final_v6.csv"
+```
+
+- **在 Kaggle 上重現：** 將上述 4 個 csv 掛載為 dataset，使其路徑與 cell 4 一致即可直接執行；
+  或修改 cell 4 的路徑對應你掛載的 dataset 位置。
+- **在本機 / 其他環境重現：** 請將下載的 4 個 csv 放在任一資料夾，並修改 **cell 4** 的
+  `train_path / test_path / sample_path / old_test_path` 指向該資料夾，`output_path` 指向
+  可寫入的輸出位置（例如同層 `./submission_final_v6.csv`）。
+
+> **注意：** `test.csv` 的 `serverGetPoint` 為評測答案，程式以 `fix_server_leak=True`（cell 4）
 > 在訓練時完整遮罩，請勿關閉此開關。
 
 ---
@@ -99,8 +117,8 @@ origin_data/
 
 | | 檔案 | 說明 |
 |--|------|------|
-| **輸入** | `origin_data/train.csv`、`test.csv`、`test_new.csv` | 主辦資料（需自行下載放置） |
-| **輸出** | `submission_final_v6.csv` | 最終提交檔（每列為 test_new 一個 prefix 的三任務預測） |
+| **輸入** | `train.csv`、`test_new.csv`、`test.csv`、`sample_submission.csv` | 主辦資料（需自行下載；路徑於 cell 4 設定，預設為 Kaggle 掛載路徑） |
+| **輸出** | `submission_final_v6.csv` | 最終提交檔（每列為 test_new 一個 prefix 的三任務預測；預設輸出至 `/kaggle/working/`） |
 | **輸出** | `submission_final_v6_preds.npz` | 模型機率快取（OOF / test 機率，可選；重跑會重新產生） |
 
 提交檔欄位對應評測格式：actionId（19 類機率 / 取 argmax）、pointId（10 類）、
